@@ -1,4 +1,5 @@
-﻿using BDWalks.API.Models.Domain;
+﻿using BDWalks.API.Data;
+using BDWalks.API.Models.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,33 +10,32 @@ namespace BDWalks.API.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
+        private readonly BDWalksDbContext _db;
+        public RegionsController(BDWalksDbContext db) {
+            this._db = db;
+        }
         //GET ALL REGIONS
         //GET : https://localhost:port/api/regions
         [HttpGet]
         public IActionResult GetAll()
         {
-            var result = new List<Region>() { 
-                new() {
-                    Id = Guid.NewGuid(),
-                    Code = "JSR",
-                    Name = "Jassor",
-                    RegionImageUrl = "https://www.shutterstock.com/shutterstock/photos/2302427907/display_1500/stock-photo-dhaka-bangladesh-daily-lifestyle-photos-of-village-people-in-bangladesh-village-life-2302427907.jpg"
-                },
-                new() {
-                    Id = Guid.NewGuid(),
-                    Code = "DHK",
-                    Name = "Dhaka",
-                    RegionImageUrl = "https://www.shutterstock.com/shutterstock/photos/2302427907/display_1500/stock-photo-dhaka-bangladesh-daily-lifestyle-photos-of-village-people-in-bangladesh-village-life-2302427907.jpg"
-                },
-                new() {
-                    Id = Guid.NewGuid(),
-                    Code = "BRL",
-                    Name = "Barishal",
-                    RegionImageUrl = "https://www.shutterstock.com/shutterstock/photos/2302427907/display_1500/stock-photo-dhaka-bangladesh-daily-lifestyle-photos-of-village-people-in-bangladesh-village-life-2302427907.jpg"
-                },
-            };
-
-            return Ok(result);
+            var regions = _db.Regions.ToList();
+            return Ok(regions);
         }
+
+        //GET REGION BY ID
+        //GET: https://localhost:port/api/regions/{id}
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public IActionResult GetById([FromRoute] Guid id)
+        {
+            var region = _db.Regions.Find(id);
+
+            if (region == null) return NotFound();
+            
+            return Ok(region);
+        }
+
+
     }
 }
