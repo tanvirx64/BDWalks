@@ -1,6 +1,7 @@
 ﻿using BDWalks.API.Data;
 using BDWalks.API.Models.Domain;
 using BDWalks.API.Models.DTO;
+using BDWalks.API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,11 @@ namespace BDWalks.API.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly BDWalksDbContext _db;
-        public RegionsController(BDWalksDbContext db) {
+        private readonly IRegionRepository regionRepository;
+
+        public RegionsController(BDWalksDbContext db, IRegionRepository regionRepository) {
             this._db = db;
+            this.regionRepository = regionRepository;
         }
         //GET ALL REGIONS
         //GET : https://localhost:port/api/regions
@@ -22,7 +26,7 @@ namespace BDWalks.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             //Get Data from DB as Domain Model
-            var regions = await _db.Regions.ToListAsync();
+            var regions = await regionRepository.GetAllAsync();
 
             //Map Domain Model to DTO
             var regionDtoList = new List<RegionDto>();
