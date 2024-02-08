@@ -3,6 +3,7 @@ using BDWalks.API.Models.Domain;
 using BDWalks.API.Models.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BDWalks.API.Controllers
 {
@@ -18,10 +19,10 @@ namespace BDWalks.API.Controllers
         //GET ALL REGIONS
         //GET : https://localhost:port/api/regions
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             //Get Data from DB as Domain Model
-            var regions = _db.Regions.ToList();
+            var regions = await _db.Regions.ToListAsync();
 
             //Map Domain Model to DTO
             var regionDtoList = new List<RegionDto>();
@@ -43,9 +44,9 @@ namespace BDWalks.API.Controllers
         //GET: https://localhost:port/api/regions/{id}
         [HttpGet]
         [Route("{id:Guid}")]
-        public IActionResult GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var regionDomain = _db.Regions.Find(id);
+            var regionDomain = await _db.Regions.FindAsync(id);
 
             if (regionDomain == null) return NotFound();
 
@@ -59,11 +60,10 @@ namespace BDWalks.API.Controllers
             return Ok(regionDto);
         }
 
-
         //POST TO ADD NEW REGION
         //POST: https://localhost:port/api/regions
         [HttpPost]
-        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map DTO to Domain Model
             var regionDomain = new Region
@@ -74,8 +74,8 @@ namespace BDWalks.API.Controllers
             };
 
             // Create and save Region in DB
-            _db.Regions.Add(regionDomain);
-            _db.SaveChanges();
+            await _db.Regions.AddAsync(regionDomain);
+            await _db.SaveChangesAsync();
 
             //Map Domain model to DTO
             var regionDto = new RegionDto
@@ -93,9 +93,9 @@ namespace BDWalks.API.Controllers
         //PUT: https://localhost:port/api/regions/{id}
         [HttpPut]
         [Route("{id:Guid}")]
-        public IActionResult Update([FromRoute] Guid id ,[FromBody] UpdateRegionRequestDto updateRegionRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id ,[FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
-            var regionDomainModel = _db.Regions.Find(id);
+            var regionDomainModel = await _db.Regions.FindAsync(id);
 
             if (regionDomainModel == null) return NotFound();
 
@@ -105,7 +105,7 @@ namespace BDWalks.API.Controllers
             regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
 
             // Update Region
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             //Map Domain model to DTO
             var regionDto = new RegionDto
@@ -123,13 +123,13 @@ namespace BDWalks.API.Controllers
         //DELETE: https://localhost:port/api/regions/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var regionDomainModel = _db.Regions.Find(id);
+            var regionDomainModel = await _db.Regions.FindAsync(id);
             if (regionDomainModel == null) return NoContent();
 
             _db.Regions.Remove(regionDomainModel);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             var regionDto = new RegionDto
             {
