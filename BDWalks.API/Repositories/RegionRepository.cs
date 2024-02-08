@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BDWalks.API.Repositories
 {
-    public class SQLRegionRepository : IRegionRepository
+    public class RegionRepository : IRegionRepository
     {
         private readonly BDWalksDbContext _db;
-        public SQLRegionRepository(BDWalksDbContext db)
+        public RegionRepository(BDWalksDbContext db)
         {
             this._db = db;
         }
