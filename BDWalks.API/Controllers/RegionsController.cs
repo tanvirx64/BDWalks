@@ -88,5 +88,58 @@ namespace BDWalks.API.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id}, regionDto);
         }
+
+        //UPDATE REGION
+        //PUT: https://localhost:port/api/regions/{id}
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public IActionResult Update([FromRoute] Guid id ,[FromBody] UpdateRegionRequestDto updateRegionRequestDto)
+        {
+            var regionDomainModel = _db.Regions.Find(id);
+
+            if (regionDomainModel == null) return NotFound();
+
+            //Map DTO to Domain Model
+            regionDomainModel.Code = updateRegionRequestDto.Code;
+            regionDomainModel.Name = updateRegionRequestDto.Name;
+            regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
+
+            // Update Region
+            _db.SaveChanges();
+
+            //Map Domain model to DTO
+            var regionDto = new RegionDto
+            {
+                Id = regionDomainModel.Id,
+                Code = regionDomainModel.Code,
+                Name = regionDomainModel.Name,
+                RegionImageUrl = regionDomainModel.RegionImageUrl,
+            };
+
+            return Ok(regionDto);
+        }
+
+        //DELETE REGION
+        //DELETE: https://localhost:port/api/regions/{id}
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public IActionResult Delete([FromRoute] Guid id)
+        {
+            var regionDomainModel = _db.Regions.Find(id);
+            if (regionDomainModel == null) return NoContent();
+
+            _db.Regions.Remove(regionDomainModel);
+            _db.SaveChanges();
+
+            var regionDto = new RegionDto
+            {
+                Id = regionDomainModel.Id,
+                Code = regionDomainModel.Code,
+                Name = regionDomainModel.Name,
+                RegionImageUrl = regionDomainModel.RegionImageUrl,
+            };
+
+            return Ok(regionDto);
+        }
     }
 }
