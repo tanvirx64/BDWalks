@@ -1,4 +1,5 @@
-﻿using BDWalks.API.Data;
+﻿using AutoMapper;
+using BDWalks.API.Data;
 using BDWalks.API.Models.Domain;
 using BDWalks.API.Models.DTO;
 using BDWalks.API.Repositories;
@@ -13,12 +14,12 @@ namespace BDWalks.API.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-        private readonly BDWalksDbContext _db;
         private readonly IRegionRepository regionRepository;
+        private readonly IMapper mapper;
 
-        public RegionsController(BDWalksDbContext db, IRegionRepository regionRepository) {
-            this._db = db;
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper) {
             this.regionRepository = regionRepository;
+            this.mapper = mapper;
         }
         //GET ALL REGIONS
         //GET : https://localhost:port/api/regions
@@ -29,16 +30,7 @@ namespace BDWalks.API.Controllers
             var regions = await regionRepository.GetAllAsync();
 
             //Map Domain Model to DTO
-            var regionDtoList = new List<RegionDto>();
-            foreach (var regionDomain in regions) { 
-                regionDtoList.Add(new RegionDto
-                {
-                    Id = regionDomain.Id,
-                    Code = regionDomain.Code,
-                    Name = regionDomain.Name,
-                    RegionImageUrl = regionDomain.RegionImageUrl,
-                });
-            }
+            var regionDtoList = mapper.Map<List<RegionDto>>(regions);
 
             //Return The DTO to the Client
             return Ok(regionDtoList);
@@ -54,13 +46,8 @@ namespace BDWalks.API.Controllers
 
             if (regionDomain == null) return NotFound();
 
-            var regionDto = new RegionDto {
-                Id = regionDomain.Id,
-                Code = regionDomain.Code,
-                Name = regionDomain.Name,
-                RegionImageUrl = regionDomain.RegionImageUrl,
-            };
-            
+            var regionDto = mapper.Map<RegionDto>(regionDomain);
+
             return Ok(regionDto);
         }
 
@@ -70,24 +57,13 @@ namespace BDWalks.API.Controllers
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map DTO to Domain Model
-            var regionDomain = new Region
-            {
-                Code = addRegionRequestDto.Code,
-                Name = addRegionRequestDto.Name,
-                RegionImageUrl = addRegionRequestDto.RegionImageUrl,
-            };
+            var regionDomain = mapper.Map<Region>(addRegionRequestDto);
 
             // Create and save Region in DB
             await regionRepository.CreateAsync(regionDomain);
 
             //Map Domain model to DTO
-            var regionDto = new RegionDto
-            {
-                Id= regionDomain.Id,
-                Code = regionDomain.Code,
-                Name = regionDomain.Name,
-                RegionImageUrl = regionDomain.RegionImageUrl,
-            };
+            var regionDto = mapper.Map<RegionDto>(regionDomain);
 
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id}, regionDto);
         }
@@ -99,11 +75,7 @@ namespace BDWalks.API.Controllers
         public async Task<IActionResult> Update([FromRoute] Guid id ,[FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             //Map DTO to Domain Model
-            var regionDomainModel = new Region { 
-                Code = updateRegionRequestDto.Code,
-                Name = updateRegionRequestDto.Name ,
-                RegionImageUrl = updateRegionRequestDto.RegionImageUrl,
-            };
+            var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
 
             regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
 
@@ -113,13 +85,7 @@ namespace BDWalks.API.Controllers
             }
 
             //Map Domain model to DTO
-            var regionDto = new RegionDto
-            {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl,
-            };
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
 
             return Ok(regionDto);
         }
@@ -134,13 +100,7 @@ namespace BDWalks.API.Controllers
        
             if (regionDomainModel == null) return NotFound();
 
-            var regionDto = new RegionDto
-            {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl,
-            };
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
 
             return Ok(regionDto);
         }

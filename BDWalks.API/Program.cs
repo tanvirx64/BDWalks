@@ -1,4 +1,5 @@
 using BDWalks.API.Data;
+using BDWalks.API.Mappings;
 using BDWalks.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<BDWalksDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksConnectionString")));
+
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 
-builder.Services.AddDbContext<BDWalksDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksConnectionString")));
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 
