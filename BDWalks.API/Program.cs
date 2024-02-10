@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BDWalksDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksConnectionString")));
 
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

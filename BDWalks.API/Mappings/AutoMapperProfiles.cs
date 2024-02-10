@@ -8,9 +8,18 @@ namespace BDWalks.API.Mappings
     {
         public AutoMapperProfiles()
         {
+            //Region
             CreateMap<Region,RegionDto>().ReverseMap();
-            CreateMap<AddRegionRequestDto,Region>();
-            CreateMap<UpdateRegionRequestDto,Region>();
+            CreateMap<AddRegionRequestDto,Region>().ReverseMap();
+            CreateMap<UpdateRegionRequestDto,Region>().ReverseMap();
+            
+            //Walk
+            CreateMap<Walk, WalkDto>().ReverseMap();
+            CreateMap<AddWalksRequestDto, Walk>().ReverseMap();
+            CreateMap<UpdateWalkRequestDto, Walk>().ReverseMap();
+            
+            //Difficulty
+            CreateMap<Difficulty, DifficultyDto>().ReverseMap();
         }
     }
 }
