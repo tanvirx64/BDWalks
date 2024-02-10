@@ -35,7 +35,7 @@ namespace BDWalks.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var walk= await walkRepository.GetByIdAsync(id);
+            var walk = await walkRepository.GetByIdAsync(id);
 
             if (walk == null) return NotFound();
 
@@ -61,19 +61,31 @@ namespace BDWalks.API.Controllers
         // PUT: https://localhost:port/api/walks/{id}
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromBody] UpdateWalkRequestDto updateWalkRequestDto, [FromRoute] Guid id)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
         {
             //Map Dto to Domain Model
             var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);
 
             walkDomainModel = await walkRepository.UpdateAsync(walkDomainModel, id);
 
-            if(walkDomainModel == null) return NotFound();
+            if (walkDomainModel == null) return NotFound();
 
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
 
         }
 
+        //Delete Walks
+        // DELETE: https://localhost:port/api/walks/{id}
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var deletedWalk = await walkRepository.DeleteAsync(id);
+
+            if (deletedWalk == null) return NotFound();    
+
+            return Ok(mapper.Map<WalkDto>(deletedWalk));
+        }
 
     }
 }

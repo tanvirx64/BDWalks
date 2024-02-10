@@ -55,5 +55,15 @@ namespace BDWalks.API.Repositories
 
             return existingWalk;
         }
+
+        public async Task<Walk?> DeleteAsync(Guid id)
+        {
+            var existingWalk = await db.Walks.FirstOrDefaultAsync(x => x.Id == id);
+            if(existingWalk == null) return null;
+
+            db.Walks.Remove(existingWalk);
+            await db.SaveChangesAsync();
+            return existingWalk;
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace BDWalks.API.Repositories
         Task<Walk?> GetByIdAsync(Guid id); 
         Task<Walk> CreateAsync(Walk walk);
         Task<Walk?> UpdateAsync(Walk walk, Guid id);
+        Task<Walk?> DeleteAsync(Guid id);
 
     }
 }
