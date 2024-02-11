@@ -1,6 +1,16 @@
-﻿namespace BDWalks.API.CustomActionFilters
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+namespace BDWalks.API.CustomActionFilters
 {
-    public class ValidateModalAttribure
+    public class ValidateModalAttribute : ActionFilterAttribute
     {
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            if(context.ModelState.IsValid == false)
+            {
+                context.Result = new BadRequestResult();
+            }
+        }
     }
 }
