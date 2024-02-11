@@ -13,7 +13,7 @@ namespace BDWalks.API.Repositories
             this.db = db;
         }
 
-        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
         {
             var walks = db.Walks.Include("Difficulty").Include("Region").AsQueryable();
 
@@ -33,9 +33,16 @@ namespace BDWalks.API.Repositories
                 {
                     walks = isAscending ? walks.OrderBy(x => x.Name) : walks.OrderByDescending(x => x.Name);
                 }
+                else if (sortBy.Equals("Length", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.LengthInKm) : walks.OrderByDescending(x => x.LengthInKm);
+                }
             }
 
-            return await walks.ToListAsync();
+            //paginating
+            var skipWalks = (pageNumber - 1) * pageSize;
+
+            return await walks.Skip(skipWalks).Take(pageSize).ToListAsync();
             //return await db.Walks.Include("Difficulty").Include("Region").ToListAsync();
         }
 
