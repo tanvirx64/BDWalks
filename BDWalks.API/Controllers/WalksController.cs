@@ -23,10 +23,10 @@ namespace BDWalks.API.Controllers
         }
 
         //GET All Walks
-        //GET: https://localhost:port/api/walks
+        //GET: https://localhost:port/api/walks?filterOn=Name&filterQuery=Track
         [HttpGet]
-        public async Task<IActionResult> GetAll() {
-            var walks = await walkRepository.GetAllAsync();
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery) {
+            var walks = await walkRepository.GetAllAsync(filterOn, filterQuery);
             return Ok(mapper.Map<List<WalkDto>>(walks));
         }
 

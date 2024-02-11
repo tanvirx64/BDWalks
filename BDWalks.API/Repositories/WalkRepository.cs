@@ -13,12 +13,20 @@ namespace BDWalks.API.Repositories
             this.db = db;
         }
 
-        public async Task<List<Walk>> GetAllAsync()
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null)
         {
-            return await db.Walks
-                   .Include("Difficulty")
-                   .Include("Region")
-                   .ToListAsync();
+            var walks = db.Walks.Include("Difficulty").Include("Region").AsQueryable();
+
+            //Filter
+            if (string.IsNullOrEmpty(filterOn) == false && string.IsNullOrEmpty(filterQuery) == false)
+            {
+                if(filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+            }
+            return await walks.ToListAsync();
+            //return await db.Walks.Include("Difficulty").Include("Region").ToListAsync();
         }
 
         public async Task<Walk?> GetByIdAsync(Guid id)
