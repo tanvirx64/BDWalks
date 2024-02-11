@@ -13,7 +13,7 @@ namespace BDWalks.API.Repositories
             this.db = db;
         }
 
-        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null)
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
         {
             var walks = db.Walks.Include("Difficulty").Include("Region").AsQueryable();
 
@@ -25,6 +25,16 @@ namespace BDWalks.API.Repositories
                     walks = walks.Where(x => x.Name.Contains(filterQuery));
                 }
             }
+
+            //Sorting
+            if (string.IsNullOrEmpty(sortBy) == false)
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.Name) : walks.OrderByDescending(x => x.Name);
+                }
+            }
+
             return await walks.ToListAsync();
             //return await db.Walks.Include("Difficulty").Include("Region").ToListAsync();
         }
