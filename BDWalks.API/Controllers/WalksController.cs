@@ -47,13 +47,19 @@ namespace BDWalks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddWalksRequestDto addWalksRequestDto)
         {
-            //Map Dto to Domain Model
-            var walkDomainModel = mapper.Map<Walk>(addWalksRequestDto);
+            if (ModelState.IsValid)
+            {
+                //Map Dto to Domain Model
+                var walkDomainModel = mapper.Map<Walk>(addWalksRequestDto);
 
-            await walkRepository.CreateAsync(walkDomainModel);
+                await walkRepository.CreateAsync(walkDomainModel);
 
-            return Ok(mapper.Map<WalkDto>(walkDomainModel));
-
+                return Ok(mapper.Map<WalkDto>(walkDomainModel));
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
 
@@ -63,14 +69,22 @@ namespace BDWalks.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
         {
-            //Map Dto to Domain Model
-            var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);
+            if (ModelState.IsValid)
+            {
+                //Map Dto to Domain Model
+                var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);
 
-            walkDomainModel = await walkRepository.UpdateAsync(walkDomainModel, id);
+                walkDomainModel = await walkRepository.UpdateAsync(walkDomainModel, id);
 
-            if (walkDomainModel == null) return NotFound();
+                if (walkDomainModel == null) return NotFound();
 
-            return Ok(mapper.Map<WalkDto>(walkDomainModel));
+                return Ok(mapper.Map<WalkDto>(walkDomainModel));
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+            
 
         }
 
