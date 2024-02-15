@@ -14,7 +14,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<BDWalksDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksConnectionString")));
+
+builder.Services.AddDbContext<BDWalksDbContext>(options => 
+options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksConnectionString")));
+
+builder.Services.AddDbContext<BDWalksAuthDbContext>(options => 
+options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksAuthConnectionString")));
 
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<IWalkRepository, WalkRepository>();
