@@ -4,6 +4,7 @@ using BDWalks.API.Data;
 using BDWalks.API.Models.Domain;
 using BDWalks.API.Models.DTO;
 using BDWalks.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace BDWalks.API.Controllers
     // https://localhost:port/api/regions
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository regionRepository;
