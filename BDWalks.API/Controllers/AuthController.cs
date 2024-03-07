@@ -43,5 +43,23 @@ namespace BDWalks.API.Controllers
             }
             return BadRequest("Something went wrong!");
         }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        {
+            var user = await userManager.FindByEmailAsync(loginRequestDto.UserName);
+            
+            if (user != null)
+            {
+                var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+                if (checkPasswordResult)
+                {
+                    // Create Token
+                    return Ok();
+                }
+            }
+            return BadRequest("UserName or Password is incorrect!");
+        }
     }
 }
