@@ -42,7 +42,7 @@ namespace BDWalks.API.Controllers
         //GET REGION BY ID
         //GET: https://localhost:port/api/regions/{id}
         [HttpGet]
-        [Authorize(Roles = "Reader")]
+        [Authorize(Roles = "Reader, Writer")]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
