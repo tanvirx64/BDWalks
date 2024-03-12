@@ -1,4 +1,5 @@
 ﻿using BDWalks.API.Models.DTO;
+using BDWalks.API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace BDWalks.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
         }
 
         //POST : api/Auth/Register
@@ -55,8 +58,21 @@ namespace BDWalks.API.Controllers
                 var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
                 if (checkPasswordResult)
                 {
+                    // Get user roles
+                    var roles = await userManager.GetRolesAsync(user);
+
                     // Create Token
-                    return Ok();
+                    if (roles != null)
+                    {
+                        var jwtToken = tokenRepository.CreateJwtToken(user, roles.ToList());
+                        var response = new LoginResponseDto()
+                        {
+                            JwtToken = jwtToken,
+                        };
+                        return Ok(response);
+                    }
+                    
+                    
                 }
             }
             return BadRequest("UserName or Password is incorrect!");
